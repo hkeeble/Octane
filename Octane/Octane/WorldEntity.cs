@@ -24,9 +24,19 @@ namespace Octane
             _rotation += rotation;
         }
 
+        public void SetRotation(Vector3 rotation)
+        {
+            _rotation = rotation;
+        }
+
         public void Translate(Vector3 translation)
         {
             _position += translation;
+        }
+
+        public void SetPosition(Vector3 position)
+        {
+            _position = position;
         }
 
         public virtual void Draw()

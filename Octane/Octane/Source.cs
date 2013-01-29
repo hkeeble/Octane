@@ -30,7 +30,7 @@ namespace Octane
             Components.Add(new InputHandler(this));
 
             Camera.AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-            Camera.Translate(new Vector3(0.0f, 8000.0f, 50.0f));
+            Camera.Translate(new Vector3(0.0f, 8000.0f, 500.0f));
             Camera.View = Matrix.CreateLookAt(Camera.Position, Vector3.Zero, Vector3.Up);
             Camera.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), Camera.AspectRatio, 1.0f, 10000.0f);
 
@@ -56,24 +56,20 @@ namespace Octane
 
             player.Update();
 
-            if (InputHandler.KeyDown(Keys.Down))
+            if (Camera.Position.Y > -50f)
             {
-                Camera.Translate(new Vector3(0.0f, -20f, 15.0f));
-                Camera.View = Matrix.CreateLookAt(Camera.Position, Vector3.Zero, Vector3.Up);
+                Camera.Translate(new Vector3(0.0f, -25.0f, 20.0f));
+                Camera.View = Matrix.CreateLookAt(Camera.Position, player.Position, Vector3.Up);
             }
-
-            if (InputHandler.KeyDown(Keys.Up))
-            {
-                Camera.Translate(new Vector3(0.0f, 20f, -15.0f));
-                Camera.View = Matrix.CreateLookAt(Camera.Position, Vector3.Zero, Vector3.Up);
-            }
+            else if (player.Position.Y > -1500.0f)
+                player.Translate(new Vector3(0.0f, -10.0f, 0.0f));
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             player.Draw();
 
