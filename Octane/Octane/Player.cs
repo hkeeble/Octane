@@ -3,38 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Octane
 {
-    class Player
+    class Player : PhysicsEntity
     {
-        private WorldEntity _model;
-        private Vector3 _translationThisFrame;
-
-        public Player(WorldEntity model)
+        public Player(Model model, Vector3 position, Vector3 rotation) : base(model, position, rotation)
         {
-            _model = model;
+            
         }
 
-        public void Draw()
-        {
-            _model.Draw();
-        }
-
-        public void Update()
+        public override void Update()
         {
             if(InputHandler.KeyDown(Keys.A))
-                _translationThisFrame.X -= 20f;
+                _velocity.X = 20f;
             if (InputHandler.KeyDown(Keys.D))
-                _translationThisFrame.X += 20f;
+                _velocity.X = 20f;
             if (InputHandler.KeyDown(Keys.W))
-                _translationThisFrame.Z -= 20f;
+                _velocity.Z = 20f;
             if (InputHandler.KeyDown(Keys.S))
-                _translationThisFrame.Z += 20f;
+                _velocity.Z = 20f;
 
-            _model.Translate(_translationThisFrame);
-            _translationThisFrame = Vector3.Zero;
+            base.Update();
         }
     }
 }

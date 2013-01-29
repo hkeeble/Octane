@@ -41,8 +41,7 @@ namespace Octane
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Plane = new WorldEntity(Content.Load<Model>("Models\\p1_wedge"), Vector3.Zero, Vector3.Zero);
-            player = new Player(Plane);
+            player = new Player(Content.Load<Model>("Models\\p1_wedge"), Vector3.Zero, Vector3.Zero);
         }
 
         protected override void UnloadContent()

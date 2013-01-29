@@ -29,7 +29,7 @@ namespace Octane
             _position += translation;
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             Matrix[] transforms = new Matrix[_model.Bones.Count];
             _model.CopyAbsoluteBoneTransformsTo(transforms);
