@@ -16,7 +16,6 @@ namespace Octane
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        WorldEntity Plane;
         Player player;
 
         public Source()
@@ -30,9 +29,16 @@ namespace Octane
             Components.Add(new InputHandler(this));
 
             Camera.AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-            Camera.Translate(new Vector3(0.0f, 8000.0f, 500.0f));
+            Camera.Translate(new Vector3(0, 15, 10));
             Camera.View = Matrix.CreateLookAt(Camera.Position, Vector3.Zero, Vector3.Up);
             Camera.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), Camera.AspectRatio, 1.0f, 10000.0f);
+
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.DepthStencilState = DepthStencilState.None;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
 
             base.Initialize();
         }
@@ -41,12 +47,12 @@ namespace Octane
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player = new Player(Content.Load<Model>("Models\\p1_wedge"), Vector3.Zero, Vector3.Zero);
+            player = new Player(Content.Load<Model>("Models\\cube"), Vector3.Zero, Vector3.Zero);
         }
 
         protected override void UnloadContent()
         {
-
+            
         }
 
         protected override void Update(GameTime gameTime)
@@ -56,20 +62,20 @@ namespace Octane
 
             player.Update();
 
-            if (Camera.Position.Y > -50f)
+            if (Camera.Position.Y > -3f)
             {
-                Camera.Translate(new Vector3(0.0f, -25.0f, 20.0f));
+                Camera.Translate(new Vector3(0.0f, -0.1f, 0.05f));
                 Camera.View = Matrix.CreateLookAt(Camera.Position, player.Position, Vector3.Up);
             }
-            else if (player.Position.Y > -1500.0f)
-                player.Translate(new Vector3(0.0f, -10.0f, 0.0f));
+            else if (player.Position.Y > -5f)
+                player.Translate(new Vector3(0.0f, -0.1f, 0.0f));
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             player.Draw();
 
