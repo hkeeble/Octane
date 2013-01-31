@@ -15,10 +15,10 @@ namespace Octane
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        public static Camera camera;
         Player player;
 
-        VertexEntity test;
+        Terrain terrain;
 
         public Source()
         {
@@ -28,12 +28,14 @@ namespace Octane
 
         protected override void Initialize()
         {
-            Components.Add(new InputHandler(this));
+            camera = new Camera(this, graphics.GraphicsDevice, new Vector3(0, 0, 10), Vector3.Zero, Vector3.Up);
 
-            Camera.AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-            Camera.Translate(new Vector3(0, 0, 5));
-            Camera.View = Matrix.CreateLookAt(Camera.Position, Vector3.Zero, Vector3.Up);
-            Camera.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), Camera.AspectRatio, 1.0f, 10000.0f);
+            Components.Add(new InputHandler(this));
+            Components.Add(camera);
+
+            RasterizerState stat = new RasterizerState();
+            stat.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = stat;
 
             base.Initialize();
         }
@@ -43,7 +45,7 @@ namespace Octane
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             player = new Player(Content.Load<Model>("Models\\cube"), new Vector3(0, 0, 2), Vector3.Zero);
-            test = new VertexEntity(new Vector3(0, -2, 0), new Vector3(45f, 0, 0), VertexEntity.Shape.Square, new Vector3(4, 4, 4), Color.LawnGreen, GraphicsDevice);
+            terrain = new Terrain(new Vector3(0f, -0.5f, 0f), Vector3.Zero, new Vector3(2, 2, 2), GraphicsDevice, 1, 0, Color.LawnGreen);
         }
 
         protected override void UnloadContent()
@@ -56,12 +58,9 @@ namespace Octane
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            player.Update();
+            //player.Update();
 
             //test.Rotate(new Vector3(0, 0, 0.01f));
-
-            if(InputHandler.KeyDown(Keys.A))
-                Camera.Translate(new Vector3(0, 0, 0.1f));
 
             //if (Camera.Position.Y > -3f)
             //{
@@ -78,8 +77,8 @@ namespace Octane
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            test.Draw(GraphicsDevice);
-            player.Draw();
+            terrain.Draw(GraphicsDevice);
+            //player.Draw();
             base.Draw(gameTime);
         }
     }
