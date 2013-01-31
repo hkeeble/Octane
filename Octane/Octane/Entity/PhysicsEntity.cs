@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Octane
 {
-    class PhysicsEntity : WorldEntity
+    class PhysicsEntity : ModelEntity
     {
         protected Vector3 _velocity;
 
