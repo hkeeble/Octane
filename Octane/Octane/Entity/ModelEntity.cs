@@ -27,8 +27,8 @@ namespace Octane
                 {
                     e.EnableDefaultLighting();
                     e.World = transforms[m.ParentBone.Index] * RotationMatrix * Matrix.CreateTranslation(Position);
-                    e.View = Source.camera.View;
-                    e.Projection = Source.camera.Projection;
+                    e.View = Camera.View;
+                    e.Projection = Camera.Projection;
                 }
                 m.Draw();
             }

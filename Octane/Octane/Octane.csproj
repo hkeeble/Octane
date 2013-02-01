@@ -120,7 +120,7 @@
     <Compile Include="Properties\Program.cs" />
     <Compile Include="Source.cs" />
     <Compile Include="Entity\ModelEntity.cs" />
-    <Compile Include="VertexEntities\Terrain.cs" />
+    <Compile Include="Terrain.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

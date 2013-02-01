@@ -22,8 +22,8 @@ namespace Octane
         {
             graphics.SetVertexBuffer(_vertexBuffer);
             _effect.World = RotationMatrix * Matrix.CreateTranslation(Position);
-            _effect.View = Source.camera.View;
-            _effect.Projection = Source.camera.Projection;
+            _effect.View = Camera.View;
+            _effect.Projection = Camera.Projection;
             _effect.VertexColorEnabled = true;
 
             foreach (EffectPass pass in _effect.CurrentTechnique.Passes)

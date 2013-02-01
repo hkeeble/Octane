@@ -11,6 +11,20 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Octane
 {
+    public struct VertexPositionColorNormal
+    {
+        public Vector3 Position;
+        public Color Color;
+        public Vector3 Normal;
+
+        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
+        (
+            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+            new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+            new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
+        );
+    }
+
     public class Source : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
@@ -28,13 +42,14 @@ namespace Octane
 
         protected override void Initialize()
         {
-            camera = new Camera(this, graphics.GraphicsDevice, new Vector3(0, 0, 10), Vector3.Zero, Vector3.Up);
+            camera = new Camera(this, graphics.GraphicsDevice, new Vector3(0, 6, 10), new Vector3(0, 2, 0), Vector3.Up);
 
             Components.Add(new InputHandler(this));
             Components.Add(camera);
 
             RasterizerState stat = new RasterizerState();
             stat.CullMode = CullMode.None;
+            //stat.FillMode = FillMode.WireFrame;
             GraphicsDevice.RasterizerState = stat;
 
             base.Initialize();
@@ -45,7 +60,7 @@ namespace Octane
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             player = new Player(Content.Load<Model>("Models\\cube"), new Vector3(0, 0, 2), Vector3.Zero);
-            terrain = new Terrain(new Vector3(0f, -0.5f, 0f), Vector3.Zero, new Vector3(2, 2, 2), GraphicsDevice, 1, 0, Color.LawnGreen);
+            terrain = new Terrain(80, 80, 1, Color.LawnGreen, GraphicsDevice);
         }
 
         protected override void UnloadContent()
