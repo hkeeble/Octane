@@ -9,27 +9,35 @@ namespace Octane
 {
     abstract class VertexEntity : Entity
     {
-        protected VertexPositionColor[] _vertices;
+        protected VertexPositionColorNormal[] _vertices;
         protected VertexBuffer _vertexBuffer;
+        protected int[] _indices;
+        protected IndexBuffer _indexBuffer;
         protected BasicEffect _effect;
+        protected PrimitiveType _primType;
+        protected int _primCount;
 
-        public VertexEntity(Vector3 position, Vector3 rotation, Vector3 scale, GraphicsDevice graphics) : base (position, rotation)
+        protected VertexEntity(Vector3 position, Vector3 rotation, GraphicsDevice graphics, PrimitiveType primitiveType)
+            : base(position, rotation)
         {
             _effect = new BasicEffect(graphics);
+            _primType = primitiveType;
         }
 
-        public void Draw(GraphicsDevice graphics)
+        public virtual void Draw(GraphicsDevice device)
         {
-            graphics.SetVertexBuffer(_vertexBuffer);
             _effect.World = RotationMatrix * Matrix.CreateTranslation(Position);
             _effect.View = Camera.View;
             _effect.Projection = Camera.Projection;
             _effect.VertexColorEnabled = true;
+            _effect.EnableDefaultLighting();
+            device.SetVertexBuffer(_vertexBuffer);
+            device.Indices = _indexBuffer;
 
             foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphics.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList, _vertices, 0, 12);
+                device.DrawUserIndexedPrimitives(_primType, _vertices, 0, _vertices.Length, _indices, 0, _primCount, VertexPositionColorNormal.VertexDeclaration);
             }
         }
     }

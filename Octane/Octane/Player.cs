@@ -11,6 +11,7 @@ namespace Octane
     class Player : PhysicsEntity
     {
         const float DRAG = 1f;
+        private float _currentSpeed = 1.0f;
 
         public Player(Model model, Vector3 position, Vector3 rotation) : base(model, position, rotation)
         {
@@ -38,7 +39,14 @@ namespace Octane
             else
                 SetRotation(Vector3.Zero);
 
+            if (InputHandler.KeyDown(Keys.Space))
+            {
+                _currentSpeed += 0.1f;
+            }
+
             base.Update();
         }
+
+        public float CurrentSpeed { get { return _currentSpeed; } }
     }
 }

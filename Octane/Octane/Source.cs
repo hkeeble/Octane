@@ -8,9 +8,13 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Octane.Components;
 
 namespace Octane
 {
+    /// <summary>
+    /// Struct that contains VertexDeclarations for Position, Color and Normal
+    /// </summary>
     public struct VertexPositionColorNormal
     {
         public Vector3 Position;
@@ -27,12 +31,16 @@ namespace Octane
 
     public class Source : Microsoft.Xna.Framework.Game
     {
+        #region Declarations
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        public static Camera camera;
-        Player player;
 
-        Terrain terrain;
+        public static Camera camera;
+
+        Ingame inGame;
+        MainMenu mainMenu;
+
+        #endregion
 
         public Source()
         {
@@ -42,15 +50,22 @@ namespace Octane
 
         protected override void Initialize()
         {
-            camera = new Camera(this, graphics.GraphicsDevice, new Vector3(0, 6, 10), new Vector3(0, 2, 0), Vector3.Up);
+            camera = new Camera(this, graphics.GraphicsDevice, new Vector3(0, 50, -50), new Vector3(0, 0, -50), Vector3.Up);
+
+            inGame = new Ingame(this);
+            mainMenu = new MainMenu(this);
 
             Components.Add(new InputHandler(this));
+            Components.Add(inGame);
+            Components.Add(mainMenu);
             Components.Add(camera);
 
-            RasterizerState stat = new RasterizerState();
-            stat.CullMode = CullMode.None;
-            //stat.FillMode = FillMode.WireFrame;
-            GraphicsDevice.RasterizerState = stat;
+            mainMenu.Enabled = true;
+            inGame.Enabled = false;
+
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 800;
+            graphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -58,9 +73,6 @@ namespace Octane
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            player = new Player(Content.Load<Model>("Models\\cube"), new Vector3(0, 0, 2), Vector3.Zero);
-            terrain = new Terrain(80, 80, 1, Color.LawnGreen, GraphicsDevice);
         }
 
         protected override void UnloadContent()
@@ -73,27 +85,23 @@ namespace Octane
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            //player.Update();
-
-            //test.Rotate(new Vector3(0, 0, 0.01f));
-
-            //if (Camera.Position.Y > -3f)
-            //{
-            //    Camera.Translate(new Vector3(0.0f, -0.1f, 0.05f));
-            //    Camera.View = Matrix.CreateLookAt(Camera.Position, player.Position, Vector3.Up);
-            //}
-            //else if (player.Position.Y > -5f)
-            //    player.Translate(new Vector3(0.0f, -0.1f, 0.0f));
+            if (mainMenu.Enabled == true)
+            {
+                if (InputHandler.KeyDown(Keys.Enter))
+                {
+                    mainMenu.Enabled = false;
+                    mainMenu.Visible = false;
+                    GraphicsDevice.BlendState = BlendState.Opaque;
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    inGame.Enabled = true;
+                }
+            }
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            terrain.Draw(GraphicsDevice);
-            //player.Draw();
             base.Draw(gameTime);
         }
     }
