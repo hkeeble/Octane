@@ -7,11 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Octane
 {
-    class PhysicsEntity : ModelEntity
+    abstract class PhysicsEntity : ModelEntity
     {
         protected Vector3 _velocity;
 
-        public PhysicsEntity(Model model, Vector3 position, Vector3 rotation) : base(model, position, rotation)
+        protected PhysicsEntity(Model model, Vector3 position, Vector3 rotation)
+            : base(model, position, rotation)
         {
             _velocity = Vector3.Zero;
         }

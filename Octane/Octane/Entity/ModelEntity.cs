@@ -7,11 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Octane
 {
-    class ModelEntity : Entity
+    abstract class ModelEntity : Entity
     {
         private Model _model;
 
-        public ModelEntity(Model model, Vector3 position, Vector3 rotation) : base(position, rotation)
+        protected ModelEntity(Model model, Vector3 position, Vector3 rotation)
+            : base(position, rotation)
         {
             _model = model;
         }

@@ -9,7 +9,7 @@ namespace Octane
 {
     abstract class TexturedVertexEntity : VertexEntity
     {
-        protected virtual VertexPositionNormalTexture[] _vertices;
+        protected virtual VertexPositionNormalTexture[] _vertices { get; set; }
         private Texture2D _texture;
 
         protected TexturedVertexEntity(Vector3 position, Vector3 rotation, GraphicsDevice graphics, PrimitiveType primitiveType, Texture2D texture)
@@ -18,7 +18,7 @@ namespace Octane
             _texture = texture;
         }
 
-        public virtual void Draw(GraphicsDevice device)
+        public override void Draw(GraphicsDevice device)
         {
             _effect.World = RotationMatrix * Matrix.CreateTranslation(Position);
             _effect.View = Camera.View;

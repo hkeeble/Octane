@@ -9,7 +9,7 @@ namespace Octane
 {
     abstract class VertexEntity : Entity
     {
-        protected virtual VertexPositionColorNormal[] _vertices;
+        protected virtual VertexPositionColorNormal[] _vertices { get; set;}
         protected VertexBuffer _vertexBuffer;
         protected int[] _indices;
         protected IndexBuffer _indexBuffer;
