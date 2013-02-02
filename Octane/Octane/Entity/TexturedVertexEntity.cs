@@ -7,21 +7,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Octane
 {
-    abstract class VertexEntity : Entity
+    abstract class TexturedVertexEntity : VertexEntity
     {
-        protected virtual VertexPositionColorNormal[] _vertices;
-        protected VertexBuffer _vertexBuffer;
-        protected int[] _indices;
-        protected IndexBuffer _indexBuffer;
-        protected BasicEffect _effect;
-        protected PrimitiveType _primType;
-        protected int _primCount;
+        protected virtual VertexPositionNormalTexture[] _vertices;
+        private Texture2D _texture;
 
-        protected VertexEntity(Vector3 position, Vector3 rotation, GraphicsDevice graphics, PrimitiveType primitiveType)
-            : base(position, rotation)
+        protected TexturedVertexEntity(Vector3 position, Vector3 rotation, GraphicsDevice graphics, PrimitiveType primitiveType, Texture2D texture)
+            : base(position, rotation, graphics, primitiveType)
         {
-            _effect = new BasicEffect(graphics);
-            _primType = primitiveType;
+            _texture = texture;
         }
 
         public virtual void Draw(GraphicsDevice device)
@@ -31,6 +25,7 @@ namespace Octane
             _effect.Projection = Camera.Projection;
             _effect.VertexColorEnabled = true;
             _effect.EnableDefaultLighting();
+            _effect.TextureEnabled = true;
             device.SetVertexBuffer(_vertexBuffer);
             device.Indices = _indexBuffer;
 
