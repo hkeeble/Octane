@@ -40,5 +40,13 @@ namespace Octane
                 device.DrawUserIndexedPrimitives(_primType, _vertices, 0, _vertices.Length, _indices, 0, _primCount, VertexPositionColorNormal.VertexDeclaration);
             }
         }
+
+        protected virtual void InitBuffers(GraphicsDevice graphics)
+        {
+            _vertexBuffer = new VertexBuffer(graphics, VertexPositionColorNormal.VertexDeclaration, _vertices.Length, BufferUsage.None);
+            _vertexBuffer.SetData<VertexPositionColorNormal>(_vertices);
+            _indexBuffer = new IndexBuffer(graphics, IndexElementSize.ThirtyTwoBits, _indices.Length, BufferUsage.None);
+            _indexBuffer.SetData<int>(_indices);
+        }
     }
 }

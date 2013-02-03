@@ -10,12 +10,20 @@ namespace Octane
     abstract class TexturedVertexEntity : VertexEntity
     {
         protected virtual VertexPositionNormalTexture[] _vertices { get; set; }
-        private Texture2D _texture;
+        protected Texture2D _texture;
 
         protected TexturedVertexEntity(Vector3 position, Vector3 rotation, GraphicsDevice graphics, PrimitiveType primitiveType, Texture2D texture)
             : base(position, rotation, graphics, primitiveType)
         {
             _texture = texture;
+        }
+
+        protected override void InitBuffers(GraphicsDevice graphics)
+        {
+            _vertexBuffer = new VertexBuffer(graphics, VertexPositionNormalTexture.VertexDeclaration, _vertices.Length, BufferUsage.None);
+            _vertexBuffer.SetData<VertexPositionNormalTexture>(_vertices);
+            _indexBuffer = new IndexBuffer(graphics, IndexElementSize.ThirtyTwoBits, _indices.Length, BufferUsage.None);
+            _indexBuffer.SetData<int>(_indices);
         }
 
         public override void Draw(GraphicsDevice device)

@@ -12,33 +12,21 @@ namespace Octane
         private int _terrainWidth;
         private int _terrainHeight;
         private float[,] _heightData;
+        private Vector3 _scale;
+
+        private bool _isWater = false;
 
         public Terrain(int width, int height, GraphicsDevice device, Vector3 position, Vector3 rotation, Vector3 scale) : base(position, rotation, device, PrimitiveType.TriangleList)
         {
             _terrainWidth = width;
             _terrainHeight = height;
 
+            _scale = scale;
+
             GenerateHeightData();
-
-            _vertices = new VertexPositionColorNormal[_terrainHeight * _terrainWidth];
-
-            for (int x = 0; x < _terrainWidth; x++)
-            {
-                for (int y = 0; y < _terrainHeight; y++)
-                {
-                    _vertices[x + y * _terrainWidth].Position = new Vector3(x, _heightData[x, y], -y) * scale;
-                    _vertices[x + y * _terrainWidth].Normal = new Vector3(0, 0, 0);
-                    if (_heightData[x, y] > 3)
-                        _vertices[x + y * _terrainWidth].Color = Color.LightGray;
-                    else
-                        _vertices[x + y * _terrainWidth].Color = Color.Green;
-                }
-            }
+            GenerateVertices();
 
             _effect = new BasicEffect(device);
-
-            _vertexBuffer = new VertexBuffer(device, VertexPositionColorNormal.VertexDeclaration, _vertices.Length, BufferUsage.None);
-            _vertexBuffer.SetData<VertexPositionColorNormal>(_vertices);
 
             _indices = new int[(_terrainWidth - 1) * (_terrainHeight - 1) * 6];
             int counter = 0;
@@ -61,12 +49,11 @@ namespace Octane
                 }
             }
 
-            _indexBuffer = new IndexBuffer(device, IndexElementSize.ThirtyTwoBits, _indices.Length, BufferUsage.None);
-            _indexBuffer.SetData<int>(_indices);
-
             CalculateNormals();
 
             _primCount = _indices.Length / 3;
+
+            InitBuffers(device);
         }
 
         private void GenerateHeightData()
@@ -79,9 +66,39 @@ namespace Octane
                 for (int y = 0; y < _terrainHeight; y++)
                 {
                     _heightData[x, y] = (float)random.NextDouble();
-                    if (_heightData[x, y] > 0.95f)
-                        _heightData[x, y] = (float)random.NextDouble() * 4;
+
+                    if(!_isWater)
+                        if (_heightData[x, y] > 0.95f)
+                            _heightData[x, y] = (float)random.NextDouble() * 4;
+                    else
+                        if (_heightData[x, y] > 0.5f)
+                            _heightData[x, y] = (float)random.NextDouble() * 2;
                 }
+        }
+
+        private void GenerateVertices()
+        {
+            _vertices = new VertexPositionColorNormal[_terrainHeight * _terrainWidth];
+
+            for (int x = 0; x < _terrainWidth; x++)
+            {
+                for (int y = 0; y < _terrainHeight; y++)
+                {
+                    _vertices[x + y * _terrainWidth].Position = new Vector3(x, _heightData[x, y], -y) * _scale;
+                    _vertices[x + y * _terrainWidth].Normal = new Vector3(0, 0, 0);
+                    if (!_isWater)
+                    {
+                        if (_heightData[x, y] > 3)
+                            _vertices[x + y * _terrainWidth].Color = Color.LightGray;
+                        else
+                            _vertices[x + y * _terrainWidth].Color = Color.Green;
+                    }
+                    else
+                    {
+                            _vertices[x + y * _terrainWidth].Color = Color.DeepSkyBlue;
+                    }
+                }
+            }
         }
 
         private void CalculateNormals()
@@ -105,5 +122,16 @@ namespace Octane
             for (int i = 0; i < _vertices.Length; i++)
                 _vertices[i].Normal.Normalize();
         }
+
+        public void Reset(bool isWater)
+        {
+            _isWater = isWater;
+
+            GenerateHeightData();
+            GenerateVertices();
+            CalculateNormals();
+        }
+
+        public bool IsWater { get { return _isWater; } }
     }
 }

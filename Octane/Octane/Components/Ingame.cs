@@ -13,16 +13,25 @@ namespace Octane.Components
 {
     public class Ingame : Microsoft.Xna.Framework.DrawableGameComponent
     {
+        Random rand;
+
         Player player;
+
+        Skybox skyBox;
+
         Terrain[] terrainBlocks;
         Vector2 terrainBlockSize;
         Vector2 terrainOffset;
         Vector3 nextTerrainBlockPosition;
+        bool overSea = false;
+        const int timeBetweenWaterTest = 600;
+        int timeSinceWaterTest = timeBetweenWaterTest;
 
         public Ingame(Game game)
             : base(game)
         {
-            player = new Player(game.Content.Load<Model>("Models\\cube"), Vector3.Zero, Vector3.Zero);
+            player = new Player(game.Content.Load<Model>("Models\\ship"), Vector3.Zero, new Vector3(90, 0, 0));
+            skyBox = new Skybox(new Vector3(0, 5, -700), Vector3.Zero, new Vector3(550, 550, 550), game.GraphicsDevice, game.Content.Load<Texture2D>("Textures\\Skybox"));
         }
 
         protected override void LoadContent()
@@ -33,6 +42,7 @@ namespace Octane.Components
 
         public override void Initialize()
         {
+            rand = new Random(DateTime.Now.Millisecond);
             base.Initialize();
         }
 
@@ -44,16 +54,21 @@ namespace Octane.Components
                 terrainBlocks[i].Draw(GraphicsDevice);
 
             player.Draw();
+            skyBox.Draw(GraphicsDevice);
 
             base.Draw(gameTime);
         }
 
         public override void Update(GameTime gameTime)
         {
+            timeSinceWaterTest--;
+
             if (Camera.Position.Y > 1)
             {
                 Camera.Move(new Vector3(0, -0.5f, 0.5f));
                 Camera.Target = new Vector3(Camera.Target.X, Camera.Target.Y + 0.03f, Camera.Target.Z + 0.02f);
+                player.SetPosition(new Vector3(Camera.Position.X, Camera.Position.Y, Camera.Position.Z - 3));
+                player.SetRotation(new Vector3(180, 0, 0));
             }
             else
             {
@@ -77,11 +92,24 @@ namespace Octane.Components
 
         private void UpdateTerrain()
         {
+            if (timeSinceWaterTest <= 0)
+            {
+                if (rand.Next(10) > 5)
+                    overSea = true;
+                else
+                    overSea = false;
+
+                timeSinceWaterTest = timeBetweenWaterTest;
+            }
+
             for (int i = 0; i < terrainBlocks.Length; i++)
             {
                 terrainBlocks[i].Translate(new Vector3(0, 0, player.CurrentSpeed));
                 if (terrainBlocks[i].Position.Z > 700)
+                {
+                    terrainBlocks[i].Reset(overSea);
                     terrainBlocks[i].SetPosition(nextTerrainBlockPosition);
+                }
             }
         }
     }

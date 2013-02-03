@@ -10,34 +10,35 @@ namespace Octane
 {
     class Player : PhysicsEntity
     {
-        const float DRAG = 1f;
+        const float DRAG = 0.001f;
         private float _currentSpeed = 1.0f;
 
         public Player(Model model, Vector3 position, Vector3 rotation) : base(model, position, rotation)
         {
-            
+
         }
 
         public override void Update()
         {
             if (InputHandler.KeyDown(Keys.Left))
-                _velocity.X = -20f;
+                _velocity.X = -0.01f;
             if (InputHandler.KeyDown(Keys.Right))
-                _velocity.X = 20f;
+                _velocity.X = 0.01f;
+            if (InputHandler.KeyDown(Keys.Up))
+                _velocity.Y = 0.01f;
+            if (InputHandler.KeyDown(Keys.Down))
+                _velocity.Y = -0.01f;
             else
             {
                 if (_velocity.X > 0)
                     _velocity.X -= DRAG;
                 if (_velocity.X < 0)
                     _velocity.X += DRAG;
+                if (_velocity.Y > 0)
+                    _velocity.Y -= DRAG;
+                if (_velocity.Y < 0)
+                    _velocity.Y += DRAG;
             }
-
-            if (_velocity.X > 0)
-                    SetRotation(new Vector3(0.0f, 0.0f, -0.3f));
-            else if (_velocity.X < 0)
-                    SetRotation(new Vector3(0.0f, 0.0f, 0.3f));
-            else
-                SetRotation(Vector3.Zero);
 
             if (InputHandler.KeyDown(Keys.Space))
             {

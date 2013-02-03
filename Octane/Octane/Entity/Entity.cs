@@ -24,6 +24,7 @@ namespace Octane
 
         public void SetRotation(Vector3 rotation)
         {
+            rotation = new Vector3(MathHelper.ToRadians(rotation.X), MathHelper.ToRadians(rotation.Y), MathHelper.ToRadians(rotation.Z));
             _rotation = rotation;
         }
 
