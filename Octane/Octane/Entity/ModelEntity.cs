@@ -35,6 +35,16 @@ namespace Octane
             }
         }
 
+        public BoundingSphere BoundingSphere
+        {
+            get
+            {
+                BoundingSphere BSphere = _model.Meshes[0].BoundingSphere;
+                BSphere.Center += Position;
+                return BSphere;
+            }
+        }
+
         public Model model { get { return _model; } }
     }
 }

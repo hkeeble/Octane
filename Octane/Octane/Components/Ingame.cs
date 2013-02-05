@@ -33,7 +33,7 @@ namespace Octane.Components
         const int SECONDS_BETWEEN_WATER_CHECKS = 15;
 
         TimeSpan obstacleSpawnTimer = TimeSpan.Zero;
-        int secondsBetweenObstacles = 1;
+        double secondsBetweenObstacles = 1;
 
         public Ingame(Game game)
             : base(game)
@@ -89,6 +89,7 @@ namespace Octane.Components
             }
             else
             {
+                secondsBetweenObstacles = 1 / player.CurrentSpeed;
                 bgLoop.Play();
                 waterCheckTimer += gameTime.ElapsedGameTime;
                 obstacleSpawnTimer += gameTime.ElapsedGameTime;
@@ -104,6 +105,13 @@ namespace Octane.Components
                     {
                         o.Update();
                         o.SetSpeed(player.CurrentSpeed / 2);
+
+                        BoundingSphere bSphere = player.model.Meshes[0].BoundingSphere;
+                        bSphere.Center += player.Position;
+
+                        if (player.BoundingSphere.Intersects(o.BoundingSphere))
+                            Game.Exit();
+
                     }
             }
 
