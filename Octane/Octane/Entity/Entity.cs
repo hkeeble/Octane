@@ -19,6 +19,7 @@ namespace Octane
 
         public void Rotate(Vector3 rotation)
         {
+            rotation = new Vector3(MathHelper.ToRadians(rotation.X), MathHelper.ToRadians(rotation.Y), MathHelper.ToRadians(rotation.Z));
             _rotation += rotation;
         }
 
@@ -40,6 +41,6 @@ namespace Octane
 
         protected Matrix RotationMatrix { get { return (Matrix.CreateRotationX(_rotation.X) * Matrix.CreateRotationY(_rotation.Y) * Matrix.CreateRotationZ(_rotation.Z)); } }
         public Vector3 Position { get { return _position; } }
-        public Vector3 Rotation { get { return _rotation; } }
+        public Vector3 Rotation { get { return new Vector3(MathHelper.ToDegrees(_rotation.X), MathHelper.ToDegrees(_rotation.Y), MathHelper.ToDegrees(_rotation.Z)); } }
     }
 }

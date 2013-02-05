@@ -110,6 +110,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Obstacle.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Components\MainMenu.cs" />
     <Compile Include="Components\Ingame.cs" />

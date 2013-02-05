@@ -19,19 +19,31 @@ namespace Octane.Components
 
         Skybox skyBox;
 
+        SoundEffect bgMusic;
+        SoundEffectInstance bgLoop;
+
+        List<Obstacle> obstacles = new List<Obstacle>();
+
         Terrain[] terrainBlocks;
         Vector2 terrainBlockSize;
         Vector2 terrainOffset;
         Vector3 nextTerrainBlockPosition;
         bool overSea = false;
-        const int timeBetweenWaterTest = 600;
-        int timeSinceWaterTest = timeBetweenWaterTest;
+        TimeSpan waterCheckTimer = TimeSpan.Zero;
+        const int SECONDS_BETWEEN_WATER_CHECKS = 15;
+
+        TimeSpan obstacleSpawnTimer = TimeSpan.Zero;
+        int secondsBetweenObstacles = 1;
 
         public Ingame(Game game)
             : base(game)
         {
             player = new Player(game.Content.Load<Model>("Models\\ship"), Vector3.Zero, new Vector3(90, 0, 0));
             skyBox = new Skybox(new Vector3(0, 5, -700), Vector3.Zero, new Vector3(550, 550, 550), game.GraphicsDevice, game.Content.Load<Texture2D>("Textures\\Skybox"));
+
+            bgMusic = game.Content.Load<SoundEffect>("Sounds\\music");
+            bgLoop = bgMusic.CreateInstance();
+            bgLoop.IsLooped = true;
         }
 
         protected override void LoadContent()
@@ -56,12 +68,17 @@ namespace Octane.Components
             player.Draw();
             skyBox.Draw(GraphicsDevice);
 
+            if (obstacles.Count > 0)
+                foreach (Obstacle o in obstacles)
+                    o.Draw();
+
             base.Draw(gameTime);
         }
 
         public override void Update(GameTime gameTime)
         {
-            timeSinceWaterTest--;
+            if (InputHandler.GamePadState.Buttons.Back == ButtonState.Pressed)
+                Game.Exit();
 
             if (Camera.Position.Y > 1)
             {
@@ -72,8 +89,22 @@ namespace Octane.Components
             }
             else
             {
+                bgLoop.Play();
+                waterCheckTimer += gameTime.ElapsedGameTime;
+                obstacleSpawnTimer += gameTime.ElapsedGameTime;
+
+                if(obstacleSpawnTimer > TimeSpan.FromSeconds(secondsBetweenObstacles))
+                    SpawnObstacles();
+
                 player.Update();
                 UpdateTerrain();
+
+                if (obstacles.Count > 0)
+                    foreach (Obstacle o in obstacles)
+                    {
+                        o.Update();
+                        o.SetSpeed(player.CurrentSpeed / 2);
+                    }
             }
 
             base.Update(gameTime);
@@ -92,14 +123,14 @@ namespace Octane.Components
 
         private void UpdateTerrain()
         {
-            if (timeSinceWaterTest <= 0)
+            if (waterCheckTimer > TimeSpan.FromSeconds(SECONDS_BETWEEN_WATER_CHECKS))
             {
                 if (rand.Next(10) > 5)
                     overSea = true;
                 else
                     overSea = false;
 
-                timeSinceWaterTest = timeBetweenWaterTest;
+                waterCheckTimer = TimeSpan.Zero;
             }
 
             for (int i = 0; i < terrainBlocks.Length; i++)
@@ -111,6 +142,15 @@ namespace Octane.Components
                     terrainBlocks[i].SetPosition(nextTerrainBlockPosition);
                 }
             }
+        }
+
+        private void SpawnObstacles()
+        {
+            rand = new Random(DateTime.Now.Millisecond);
+
+            obstacles.Add(new Obstacle(Game.Content.Load<Model>("Models\\asteroid"), new Vector3(rand.Next(-5, 5), rand.Next(1, 5), player.Position.Z - 100), Vector3.Zero, player.CurrentSpeed / 2));
+
+            obstacleSpawnTimer = TimeSpan.Zero;
         }
     }
 }

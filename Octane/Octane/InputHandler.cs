@@ -17,6 +17,8 @@ namespace Octane
         private static KeyboardState keyboardState;
         private static KeyboardState lastKeyboardState;
 
+        private static GamePadState gamePadState;
+
         public InputHandler(Game game)
             : base(game)
         {
@@ -33,6 +35,8 @@ namespace Octane
             lastKeyboardState = keyboardState;
             keyboardState = Keyboard.GetState();
 
+            gamePadState = GamePad.GetState(PlayerIndex.One);
+
             base.Update(gameTime);
         }
 
@@ -43,5 +47,7 @@ namespace Octane
             else
                 return false;
         }
+
+        public static GamePadState GamePadState { get { return gamePadState; } }
     }
 }

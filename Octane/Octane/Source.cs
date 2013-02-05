@@ -87,7 +87,7 @@ namespace Octane
 
             if (mainMenu.Enabled == true)
             {
-                if (InputHandler.KeyDown(Keys.Enter))
+                if (InputHandler.GamePadState.Buttons.A == ButtonState.Pressed)
                 {
                     mainMenu.Enabled = false;
                     mainMenu.Visible = false;

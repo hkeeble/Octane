@@ -39,6 +39,18 @@ namespace Octane
         {
             CreateLookAt();
 
+            _target += new Vector3(InputHandler.GamePadState.ThumbSticks.Right.X * 0.1f, InputHandler.GamePadState.ThumbSticks.Right.Y * 0.1f, 0);
+
+            if (_target.X > 2.5f)
+                _target.X = 2.5f;
+            if (_target.X < -2.5f)
+                _target.X = -2.5f;
+
+            if (_target.Y > 2.5f)
+                _target.Y = 2.5f;
+            if (_target.Y < -2.5f)
+                _target.Y = -2.5f;
+
             base.Update(gameTime);
         }
 
