@@ -16,6 +16,8 @@ namespace Octane
         const float MAX_SPEED = 6.0f;
         const float MIN_SPEED = 0.5f;
 
+        private bool dead = false;
+
         public Player(Model model, Vector3 position, Vector3 rotation) : base(model, position, rotation)
         {
 
@@ -27,16 +29,16 @@ namespace Octane
             _velocity.Y = InputHandler.GamePadState.ThumbSticks.Left.Y * 0.1f;
 
             if (_velocity.X > 0)
-                Rotate(new Vector3(Rotation.X, Rotation.Y, -1f));
+                Rotate(new Vector3(0f, 0f, -1f));
             else if (_velocity.X < 0)
-                Rotate(new Vector3(Rotation.X, Rotation.Y, 1f));
+                Rotate(new Vector3(0f, 0f, 1f));
             else
                 SetRotation(new Vector3(Rotation.X, Rotation.Y, 0f));
 
             if (_velocity.Y > 0)
-                Rotate(new Vector3(1f, Rotation.Y, Rotation.Z));
+                Rotate(new Vector3(1f, 0f, 0f));
             else if (_velocity.Y < 0)
-                Rotate(new Vector3(-1f, Rotation.Y, Rotation.Z));
+                Rotate(new Vector3(-1f, 0f, 0f));
             else
                 SetRotation(new Vector3(180, Rotation.Y, Rotation.Z));
 
@@ -59,5 +61,6 @@ namespace Octane
         }
 
         public float CurrentSpeed { get { return _currentSpeed; } }
+        public bool Dead { get { return dead; } set { dead = value; } }
     }
 }
