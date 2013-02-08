@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace Octane
 {
@@ -18,9 +19,11 @@ namespace Octane
 
         private bool dead = false;
 
-        public Player(Model model, Vector3 position, Vector3 rotation) : base(model, position, rotation)
-        {
+        Song _rocketSound;
 
+        public Player(Model model, Vector3 position, Vector3 rotation, Song sound) : base(model, position, rotation)
+        {
+            _rocketSound = sound;
         }
 
         public override void Update()
@@ -53,7 +56,10 @@ namespace Octane
                 SetRotation(new Vector3(165, Rotation.Y, Rotation.Z));
 
             if (InputHandler.GamePadState.Triggers.Right == 1.0f && _currentSpeed < MAX_SPEED)
+            {
                 _currentSpeed += 0.1f;
+                MediaPlayer.Play(_rocketSound);
+            }
             else if (InputHandler.GamePadState.Triggers.Left == 1.0f && _currentSpeed > MIN_SPEED)
                 _currentSpeed -= 0.1f;
 

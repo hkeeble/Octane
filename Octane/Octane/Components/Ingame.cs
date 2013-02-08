@@ -22,7 +22,9 @@ namespace Octane.Components
         SoundEffect bgMusic;
         SoundEffectInstance bgLoop;
 
-        List<Asteroid> obstacles = new List<Asteroid>();
+        Song rocket;
+
+        List<Obstacle> obstacles = new List<Obstacle>();
 
         Terrain[] terrainBlocks;
         Vector2 terrainBlockSize;
@@ -38,12 +40,14 @@ namespace Octane.Components
         public Ingame(Game game)
             : base(game)
         {
-            player = new Player(game.Content.Load<Model>("Models\\ship"), Vector3.Zero, new Vector3(90, 0, 0));
             skyBox = new Skybox(new Vector3(0, 5, -700), Vector3.Zero, new Vector3(550, 550, 550), game.GraphicsDevice, game.Content.Load<Texture2D>("Textures\\Skybox"));
 
+            rocket = game.Content.Load<Song>("Sounds\\rocket");
             bgMusic = game.Content.Load<SoundEffect>("Sounds\\music");
             bgLoop = bgMusic.CreateInstance();
             bgLoop.IsLooped = true;
+
+            player = new Player(game.Content.Load<Model>("Models\\ship"), Vector3.Zero, new Vector3(90, 0, 0), rocket);
         }
 
         protected override void LoadContent()
@@ -66,10 +70,9 @@ namespace Octane.Components
                 terrainBlocks[i].Draw(GraphicsDevice);
 
             player.Draw();
-            skyBox.Draw(GraphicsDevice);
 
             if (obstacles.Count > 0)
-                foreach (Asteroid o in obstacles)
+                foreach (Obstacle o in obstacles)
                     o.Draw();
 
             base.Draw(gameTime);
@@ -89,6 +92,9 @@ namespace Octane.Components
             }
             else
             {
+                if(player.CurrentSpeed > 3)
+                    Camera.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f + player.CurrentSpeed * 5), Camera.AspectRatio, 1, 1000);
+
                 secondsBetweenObstacles = 1 / player.CurrentSpeed;
                 bgLoop.Play();
                 waterCheckTimer += gameTime.ElapsedGameTime;
@@ -108,7 +114,6 @@ namespace Octane.Components
 
                     BoundingSphere bSphere = player.model.Meshes[0].BoundingSphere;
                     bSphere.Center += player.Position;
-                    bSphere.Radius = bSphere.Radius / 2;
 
                     if (player.BoundingSphere.Intersects(obstacles[i].BoundingSphere))
                     {
@@ -170,7 +175,10 @@ namespace Octane.Components
         {
             rand = new Random(DateTime.Now.Millisecond);
 
-            obstacles.Add(new Asteroid(Game.Content.Load<Model>("Models\\asteroid"), new Vector3(rand.Next(-10, 10), rand.Next(1, 5), player.Position.Z - 100), Vector3.Zero, player.CurrentSpeed / 2));
+            if (rand.Next(2) == 1)
+                obstacles.Add(new Asteroid(Game.Content.Load<Model>("Models\\asteroid"), new Vector3(rand.Next(-10, 10), rand.Next(1, 5), player.Position.Z - 100), Vector3.Zero, player.CurrentSpeed / 2));
+            else
+                obstacles.Add(new Rocket(Game.Content.Load<Model>("Models\\rocket"), new Vector3(rand.Next(-10, 10), rand.Next(1, 5), player.Position.Z - 100), Vector3.Zero, player.CurrentSpeed / 2));
 
             obstacleSpawnTimer = TimeSpan.Zero;
         }
