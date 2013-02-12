@@ -39,6 +39,8 @@ namespace Octane.Components
 
         public override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
             spriteBatch.Begin();
             spriteBatch.Draw(title, titlePosition, Color.White);
             spriteBatch.End();

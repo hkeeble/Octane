@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Octane
 {
@@ -19,14 +19,14 @@ namespace Octane
 
         private bool dead = false;
 
-        Song _rocketSound;
+        SoundEffect _rocketSound;
 
-        public Player(Model model, Vector3 position, Vector3 rotation, Song sound) : base(model, position, rotation)
+        public Player(Model model, Vector3 position, Vector3 rotation, SoundEffect rocketSound) : base(model, position, rotation)
         {
-            _rocketSound = sound;
+            _rocketSound = rocketSound;
         }
 
-        public override void Update()
+        public void Update()
         {
             _velocity.X = InputHandler.GamePadState.ThumbSticks.Left.X * 0.1f;
             _velocity.Y = InputHandler.GamePadState.ThumbSticks.Left.Y * 0.1f;
@@ -55,10 +55,14 @@ namespace Octane
             if (Rotation.X < 165)
                 SetRotation(new Vector3(165, Rotation.Y, Rotation.Z));
 
-            if (InputHandler.GamePadState.Triggers.Right == 1.0f && _currentSpeed < MAX_SPEED)
+            if (Ingame.chargeBar.Full)
             {
-                _currentSpeed += 0.1f;
-                MediaPlayer.Play(_rocketSound);
+                if (InputHandler.GamePadState.Triggers.Right == 1.0f && _currentSpeed < MAX_SPEED)
+                {
+                    _currentSpeed +=1.0f;
+                    _rocketSound.Play();
+                    Ingame.chargeBar.Empty();
+                }
             }
             else if (InputHandler.GamePadState.Triggers.Left == 1.0f && _currentSpeed > MIN_SPEED)
                 _currentSpeed -= 0.1f;

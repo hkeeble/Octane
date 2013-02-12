@@ -9,10 +9,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
-namespace Octane.Components
+namespace Octane
 {
     public class Ingame : Microsoft.Xna.Framework.DrawableGameComponent
     {
+        SpriteBatch spriteBatch;
+
         Random rand;
 
         Player player;
@@ -23,6 +25,9 @@ namespace Octane.Components
         SoundEffectInstance bgLoop;
 
         Song rocket;
+
+        public static ChargeBar chargeBar;
+        List<SpriteEntity> HUD;
 
         List<Obstacle> obstacles = new List<Obstacle>();
 
@@ -52,7 +57,13 @@ namespace Octane.Components
 
         protected override void LoadContent()
         {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
             InitTerrain();
+
+            HUD = new List<SpriteEntity>();
+            chargeBar = new ChargeBar(Game.Content.Load<Texture2D>("2DAssets\\ChargeBar"), new Vector2(10, Game.Window.ClientBounds.Height - 90), GraphicsDevice);
+            HUD.Add(chargeBar);
+
             base.LoadContent();
         }
 
@@ -69,6 +80,11 @@ namespace Octane.Components
             for (int i = 0; i < terrainBlocks.Length; i++)
                 terrainBlocks[i].Draw(GraphicsDevice);
 
+            spriteBatch.Begin();
+            DrawHUD();
+            spriteBatch.End();
+
+            GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
             player.Draw();
 
             if (obstacles.Count > 0)
@@ -93,7 +109,9 @@ namespace Octane.Components
             else
             {
                 if(player.CurrentSpeed > 3)
-                    Camera.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f + player.CurrentSpeed * 5), Camera.AspectRatio, 1, 1000);
+                    Camera.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f + player.CurrentSpeed * 2), Camera.AspectRatio, 1, 1000);
+
+                chargeBar.Update(gameTime, GraphicsDevice);
 
                 secondsBetweenObstacles = 1 / player.CurrentSpeed;
                 bgLoop.Play();
@@ -112,13 +130,16 @@ namespace Octane.Components
                     obstacles[i].Update();
                     obstacles[i].SetSpeed(player.CurrentSpeed / 2);
 
-                    BoundingSphere bSphere = player.model.Meshes[0].BoundingSphere;
-                    bSphere.Center += player.Position;
-
-                    if (player.BoundingSphere.Intersects(obstacles[i].BoundingSphere))
+                    if (obstacles[i].Position.Z < player.Position.Z)
                     {
-                        obstacles.Remove(obstacles[i]);
-                        player.Dead = true;
+                        BoundingSphere bSphere = player.model.Meshes[0].BoundingSphere;
+                        bSphere.Center += player.Position;
+
+                        if (player.BoundingSphere.Intersects(obstacles[i].BoundingSphere))
+                        {
+                            obstacles.Remove(obstacles[i]);
+                            player.Dead = true;
+                        }
                     }
                 }
             }
@@ -181,6 +202,15 @@ namespace Octane.Components
                 obstacles.Add(new Rocket(Game.Content.Load<Model>("Models\\rocket"), new Vector3(rand.Next(-10, 10), rand.Next(1, 5), player.Position.Z - 100), Vector3.Zero, player.CurrentSpeed / 2));
 
             obstacleSpawnTimer = TimeSpan.Zero;
+        }
+
+        private void DrawHUD()
+        {
+            foreach (SpriteEntity s in HUD)
+            {
+                s.Draw(spriteBatch);
+            }
+            GraphicsDevice.Textures[0] = null;
         }
     }
 }

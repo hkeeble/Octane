@@ -62,6 +62,7 @@ namespace Octane
 
             mainMenu.Enabled = true;
             inGame.Enabled = false;
+            inGame.Visible = false;
 
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 800;
@@ -91,9 +92,9 @@ namespace Octane
                 {
                     mainMenu.Enabled = false;
                     mainMenu.Visible = false;
-                    GraphicsDevice.BlendState = BlendState.Opaque;
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
                     inGame.Enabled = true;
+                    inGame.Visible = true;
                 }
             }
 
@@ -102,6 +103,8 @@ namespace Octane
 
         protected override void Draw(GameTime gameTime)
         {
+            
+
             base.Draw(gameTime);
         }
     }

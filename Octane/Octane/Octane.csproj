@@ -110,6 +110,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\SpriteEntity.cs" />
+    <Compile Include="HUD\ChargeBar.cs" />
     <Compile Include="Obstacles\Asteroid.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Components\MainMenu.cs" />
