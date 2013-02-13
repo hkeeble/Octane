@@ -4,10 +4,13 @@ Content\Models\ship.xnb
 Content\Textures\Rock.xnb
 Content\Models\asteroid.xnb
 Content\Textures\Rock_0.xnb
-Content\Sounds\music.xnb
 Content\Textures\Rocket.xnb
 Content\Models\rocket.xnb
 Content\Untitled_0.xnb
-Content\Sounds\rocket.xnb
 Content\2DAssets\ChargeBar.xnb
-Content\Sounds\rocket.wma
+Content\Textures\SkyboxTexture.xnb
+Content\Models\skybox.xnb
+Content\Sounds\music.xnb
+Content\Sounds\rocket.xnb
+Content\Textures\SkyboxTexture_0.xnb
+Content\Sounds\music.wma

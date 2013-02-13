@@ -9,7 +9,7 @@ namespace Octane
 {
     abstract class TexturedVertexEntity : VertexEntity
     {
-        protected virtual VertexPositionNormalTexture[] _vertices { get; set; }
+        protected new VertexPositionNormalTexture[] _vertices { get; set; }
         protected Texture2D _texture;
 
         protected TexturedVertexEntity(Vector3 position, Vector3 rotation, GraphicsDevice graphics, PrimitiveType primitiveType, Texture2D texture)

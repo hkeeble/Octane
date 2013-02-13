@@ -10,7 +10,7 @@ namespace Octane
     class Asteroid : Obstacle
     {
         public Asteroid(Model model, Vector3 position, Vector3 rotation, float speed)
-            : base(model, position, rotation, speed)
+            : base(model, position, rotation, speed, 1f)
         {
             Random rand = new Random(DateTime.Now.Millisecond);
             SetRotation(new Vector3(rand.Next(0, 90), rand.Next(0, 90), rand.Next(0, 90)));

@@ -11,8 +11,8 @@ namespace Octane
     {
         protected Vector3 _velocity;
 
-        protected PhysicsEntity(Model model, Vector3 position, Vector3 rotation)
-            : base(model, position, rotation)
+        protected PhysicsEntity(Model model, Vector3 position, Vector3 rotation, float scale)
+            : base(model, position, rotation, scale)
         {
             _velocity = Vector3.Zero;
         }

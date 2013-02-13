@@ -21,10 +21,8 @@ namespace Octane
 
         Skybox skyBox;
 
-        SoundEffect bgMusic;
-        SoundEffectInstance bgLoop;
-
-        Song rocket;
+        Song bgMusic;
+        SoundEffect rocket;
 
         public static ChargeBar chargeBar;
         List<SpriteEntity> HUD;
@@ -45,12 +43,10 @@ namespace Octane
         public Ingame(Game game)
             : base(game)
         {
-            skyBox = new Skybox(new Vector3(0, 5, -700), Vector3.Zero, new Vector3(550, 550, 550), game.GraphicsDevice, game.Content.Load<Texture2D>("Textures\\Skybox"));
+            skyBox = new Skybox(game.Content.Load<Model>("Models\\Skybox"), Vector3.Zero, Vector3.Zero, 200f);
 
-            rocket = game.Content.Load<Song>("Sounds\\rocket");
-            bgMusic = game.Content.Load<SoundEffect>("Sounds\\music");
-            bgLoop = bgMusic.CreateInstance();
-            bgLoop.IsLooped = true;
+            rocket = game.Content.Load<SoundEffect>("Sounds\\rocket");
+            bgMusic = game.Content.Load<Song>("Sounds\\music");
 
             player = new Player(game.Content.Load<Model>("Models\\ship"), Vector3.Zero, new Vector3(90, 0, 0), rocket);
         }
@@ -71,6 +67,7 @@ namespace Octane
         {
             rand = new Random(DateTime.Now.Millisecond);
             base.Initialize();
+            MediaPlayer.Play(bgMusic);
         }
 
         public override void Draw(GameTime gameTime)
@@ -79,7 +76,7 @@ namespace Octane
 
             for (int i = 0; i < terrainBlocks.Length; i++)
                 terrainBlocks[i].Draw(GraphicsDevice);
-
+            skyBox.Draw();
             spriteBatch.Begin();
             DrawHUD();
             spriteBatch.End();
@@ -114,7 +111,6 @@ namespace Octane
                 chargeBar.Update(gameTime, GraphicsDevice);
 
                 secondsBetweenObstacles = 1 / player.CurrentSpeed;
-                bgLoop.Play();
                 waterCheckTimer += gameTime.ElapsedGameTime;
                 obstacleSpawnTimer += gameTime.ElapsedGameTime;
 
@@ -160,11 +156,11 @@ namespace Octane
 
         private void InitTerrain()
         {
-            terrainOffset = new Vector2(-80, -10);
+            terrainOffset = new Vector2(-180, -10);
             nextTerrainBlockPosition = new Vector3(terrainOffset, -700);
 
             terrainBlocks = new Terrain[2];
-            terrainBlockSize = new Vector2(100, 500);
+            terrainBlockSize = new Vector2(300, 500);
             terrainBlocks[0] = new Terrain((int)terrainBlockSize.X, (int)terrainBlockSize.Y, GraphicsDevice, new Vector3(terrainOffset, 0), Vector3.Zero, new Vector3(1.5f, 1.0f, 1.5f));
             terrainBlocks[1] = new Terrain((int)terrainBlockSize.X, (int)terrainBlockSize.Y, GraphicsDevice, nextTerrainBlockPosition, Vector3.Zero, new Vector3(1.5f, 1.0f, 1.5f));
         }

@@ -10,7 +10,7 @@ namespace Octane
     class Rocket : Obstacle
     {
         public Rocket(Model model, Vector3 position, Vector3 rotation, float speed)
-            : base(model, position, rotation, speed)
+            : base(model, position, rotation, speed, 1f)
         {
             SetRotation(new Vector3(-90, 0, 0));
         }

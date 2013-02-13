@@ -9,12 +9,14 @@ namespace Octane
 {
     abstract class ModelEntity : Entity
     {
-        private Model _model;
+        protected Model _model;
+        protected float _scale;
 
-        protected ModelEntity(Model model, Vector3 position, Vector3 rotation)
+        protected ModelEntity(Model model, Vector3 position, Vector3 rotation, float scale)
             : base(position, rotation)
         {
             _model = model;
+            _scale = scale;
         }
 
         public virtual void Draw()
@@ -27,7 +29,7 @@ namespace Octane
                 foreach (BasicEffect e in m.Effects)
                 {
                     e.EnableDefaultLighting();
-                    e.World = transforms[m.ParentBone.Index] * RotationMatrix * Matrix.CreateTranslation(Position);
+                    e.World = Matrix.CreateScale(_scale) * transforms[m.ParentBone.Index] * RotationMatrix * Matrix.CreateTranslation(Position);
                     e.View = Camera.View;
                     e.Projection = Camera.Projection;
                 }

@@ -7,54 +7,33 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Octane
 {
-    class Skybox : TexturedVertexEntity
+    class Skybox : ModelEntity
     {
-        public Skybox(Vector3 position, Vector3 rotation, Vector3 scale, GraphicsDevice graphics, Texture2D texture)
-            : base(position, rotation, graphics, PrimitiveType.TriangleStrip, texture)
+        public Skybox(Model model, Vector3 position, Vector3 rotation, float scale)
+            : base(model, position, rotation, scale)
         {
-            _vertices = new VertexPositionNormalTexture[4];
 
-            _vertices[0].Position = new Vector3(-1.0f, 1.0f, 0.0f) * scale;
-            _vertices[1].Position = new Vector3(1.0f, 1.0f, 0.0f) * scale;
-            _vertices[2].Position = new Vector3(-1.0f, -1.0f, 0.0f) * scale;
-            _vertices[3].Position = new Vector3(1.0f, -1.0f, 0.0f) * scale;
-
-            _vertices[0].Normal = new Vector3(0.0f, 1.0f, 0.0f);
-            _vertices[1].Normal = new Vector3(0.0f, 1.0f, 0.0f);
-            _vertices[2].Normal = new Vector3(0.0f, 1.0f, 0.0f);
-            _vertices[3].Normal = new Vector3(0.0f, 1.0f, 0.0f);
-
-            _vertices[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
-            _vertices[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
-            _vertices[2].TextureCoordinate = new Vector2(0.0f, 1.0f);
-            _vertices[3].TextureCoordinate = new Vector2(1.0f, 1.0f);
-
-            _indices = new int[4];
-
-            for (int i = 0; i < _indices.Length; i++)
-                _indices[i] = i;
-
-            _primCount = 2;
-            _primType = PrimitiveType.TriangleStrip;
-
-            InitBuffers(graphics);
         }
 
-        public override void Draw(GraphicsDevice device)
+        public override void Draw()
         {
-            _effect.World = RotationMatrix * Matrix.CreateTranslation(Position);
-            _effect.View = Camera.View;
-            _effect.Projection = Camera.Projection;
-            _effect.TextureEnabled = true;
-            _effect.Texture = _texture;
-            device.SetVertexBuffer(_vertexBuffer);
-            device.Indices = _indexBuffer;
+            Matrix[] transforms = new Matrix[_model.Bones.Count];
+            _model.CopyAbsoluteBoneTransformsTo(transforms);
 
-            foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
+            foreach (ModelMesh m in _model.Meshes)
             {
-                pass.Apply();
-                device.DrawUserIndexedPrimitives(_primType, _vertices, 0, _vertices.Length, _indices, 0, _primCount, VertexPositionNormalTexture.VertexDeclaration);
+                foreach (BasicEffect e in m.Effects)
+                {
+                    e.LightingEnabled = true;
+                    e.EmissiveColor = new Vector3(1f, 1f, 1f);
+                    e.World = Matrix.CreateScale(_scale) * transforms[m.ParentBone.Index] * RotationMatrix * Matrix.CreateTranslation(Position);
+                    e.View = Camera.View;
+                    e.Projection = Camera.Projection;
+                }
+                m.Draw();
             }
+
+            base.Draw();
         }
     }
 }

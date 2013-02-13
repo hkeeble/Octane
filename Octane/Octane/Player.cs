@@ -21,12 +21,12 @@ namespace Octane
 
         SoundEffect _rocketSound;
 
-        public Player(Model model, Vector3 position, Vector3 rotation, SoundEffect rocketSound) : base(model, position, rotation)
+        public Player(Model model, Vector3 position, Vector3 rotation, SoundEffect rocketSound) : base(model, position, rotation, 1f)
         {
             _rocketSound = rocketSound;
         }
 
-        public void Update()
+        public override void Update()
         {
             _velocity.X = InputHandler.GamePadState.ThumbSticks.Left.X * 0.1f;
             _velocity.Y = InputHandler.GamePadState.ThumbSticks.Left.Y * 0.1f;
