@@ -15,8 +15,16 @@ namespace Octane
         private static Matrix _projection;
         private static Vector3 _up;
         private static Vector3 _target;
+        private static Vector3 _direction;
+        private static bool _rotating;
+        private static float _rotationDirection;
+
+        private static float _currentRotation = 0f;
+
+        private static float _newZ; // Used to represent the Z axis target of the next movement
 
         const float SPEED = 0.5f;
+        const float ROTATION_SPEED = 0.01f;
 
         public Camera(Game game, GraphicsDevice graphics, Vector3 position, Vector3 target, Vector3 up) : base(game)
         {
@@ -25,9 +33,16 @@ namespace Octane
             _position = position;
             _up = up;
             _target = target;
+            _direction = target - position;
+            _direction.Normalize();
+
+            _rotating = false;
+            _rotationDirection = 0f;
+            _newZ = 1f;
+
             CreateLookAt();
 
-            _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 1, 1000);
+            _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 1, 1500);
         }
 
         public override void Initialize()
@@ -39,17 +54,8 @@ namespace Octane
         {
             CreateLookAt();
 
-            _target += new Vector3(InputHandler.GamePadState.ThumbSticks.Right.X * 0.1f, InputHandler.GamePadState.ThumbSticks.Right.Y * 0.1f, 0);
-
-            if (_target.X > 2.5f)
-                _target.X = 2.5f;
-            if (_target.X < -2.5f)
-                _target.X = -2.5f;
-
-            if (_target.Y > 2.5f)
-                _target.Y = 2.5f;
-            if (_target.Y < -2.5f)
-                _target.Y = -2.5f;
+            if (_rotating)
+                Rotate();
 
             base.Update(gameTime);
         }
@@ -59,9 +65,27 @@ namespace Octane
             _position += direction * SPEED;
         }
 
+        public static void Rotate(float direction)
+        {
+            _rotating = true;
+            _rotationDirection = direction;
+        }
+
+        private static void Rotate()
+        {
+            if (_direction.Z == _newZ)
+            {
+                _newZ = _newZ * (-1);
+                _rotating = false;
+                _rotationDirection = 0f;
+            }
+            else
+                _direction = Vector3.Transform(_direction, Matrix.CreateFromAxisAngle(_up, _rotationDirection * ROTATION_SPEED));
+        }
+
         private void CreateLookAt()
         {
-            _view = Matrix.CreateLookAt(Position, _target, _up);
+            _view = Matrix.CreateLookAt(Position, _direction+_position, _up);
         }
 
         public static Vector3 Target { get { return _target; } set { _target = value; } }

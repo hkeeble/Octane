@@ -68,6 +68,7 @@ namespace Octane
             rand = new Random(DateTime.Now.Millisecond);
             base.Initialize();
             MediaPlayer.Play(bgMusic);
+            Camera.Rotate(1f);
         }
 
         public override void Draw(GameTime gameTime)
@@ -96,15 +97,6 @@ namespace Octane
             if (InputHandler.GamePadState.Buttons.Back == ButtonState.Pressed)
                 Game.Exit();
 
-            if (Camera.Position.Y > 1.5f)
-            {
-                Camera.Move(new Vector3(0, -0.5f, 0.5f));
-                Camera.Target = new Vector3(Camera.Target.X, Camera.Target.Y + 0.01f, Camera.Target.Z + 0.005f);
-                player.SetPosition(new Vector3(Camera.Position.X, Camera.Position.Y, Camera.Position.Z - 3));
-                player.SetRotation(new Vector3(180, 0, 0));
-            }
-            else
-            {
                 if(player.CurrentSpeed > 3)
                     Camera.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f + player.CurrentSpeed * 2), Camera.AspectRatio, 1, 1000);
 
@@ -138,7 +130,7 @@ namespace Octane
                         }
                     }
                 }
-            }
+
             if (player.Dead)
             {
                 if (player.Position.Y > -2)

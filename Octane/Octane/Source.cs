@@ -50,7 +50,7 @@ namespace Octane
 
         protected override void Initialize()
         {
-            camera = new Camera(this, graphics.GraphicsDevice, new Vector3(0, 50, -50), new Vector3(0, 0, -50), Vector3.Up);
+            camera = new Camera(this, graphics.GraphicsDevice, new Vector3(0, 1, 4), new Vector3(0, 1, -1), Vector3.Up);
 
             inGame = new Ingame(this);
             mainMenu = new MainMenu(this);
